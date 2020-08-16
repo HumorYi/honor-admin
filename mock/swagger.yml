@@ -1,5 +1,5 @@
-openapi: 3.0.0
-info:
+openapi: 3.0.0 # 版本号
+info: # 描述信息
   description: Mock API for vue-typescript-admin-template.
   version: 1.0.0
   title: Mock API
@@ -8,9 +8,11 @@ info:
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
-servers:
+servers: # 接口服务器地址，也⽤于声明路由前缀
   - url: /mock-api/v1
-tags:
+tags: # 接口⽂档中的标签名称
+  - name: players
+    description: Players data related api.
   - name: articles
     description: Articles data related api.
   - name: roles
@@ -19,20 +21,69 @@ tags:
     description: Transactions data related api.
   - name: users
     description: Users related api.
-paths:
-  /articles:
+paths: # 接口路径和定义
+  /players:
     get:
       tags:
-        - articles
-      summary: Get Article List
-      description: Return a list of articles.
-      operationId: getArticles
+        - players
+      summary: Get Players List
+      description: Return a list of players.
+      operationId: getPlayers
       parameters:
+        - name: accountname
+          in: query
+          description: Used to filter players by accountname
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: page number
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+        - name: limit
+          in: query
+          description: The maximum number of list returned for one page.
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+            maximum: 50
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                  data:
+                    type: object
+                    properties:
+                      total:
+                        type: integer
+                        format: int32
+                      list:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Player"
+  /articles:
+    get:
+      tags: # 接口⽂档中的标签名称，在生成 api 文档时 就会把该接口 归纳入 对应的页签中
+        - articles
+      summary: Get Article List # 概要
+      description: Return a list of articles.
+      operationId: getArticles # 操作Id，在此处对应的是接口的处理函数名
+      parameters: # 参数
         - name: importance
           in: query
           description: Used to filter articles by importance.
-          schema:
-            $ref: '#/components/schemas/Article/properties/importance'
+          schema: # 参数形式
+            $ref: '#/components/schemas/Article/properties/importance' # 引用公共形式
         - name: title
           in: query
           description: Used to filter articles by matched title substring.
@@ -44,12 +95,12 @@ paths:
           schema:
             $ref: '#/components/schemas/Article/properties/type'
         - name: page
-          in: query
+          in: query # 参数存放位置
           description: The wanted page number (one page).
-          schema:
-            type: integer
-            format: int32
-            minimum: 1
+          schema: # 参数形式
+            type: integer # 参数类型
+            format: int32 # 参数格式
+            minimum: 1 # 最小值
         - name: limit
           in: query
           description: The maximum number of articles returned for one page.
@@ -710,7 +761,7 @@ paths:
                         $ref: '#/components/schemas/User'
         401:
           $ref: '#/components/responses/Unauthorized'
-components:
+components: # 可复用组件，数据结构、响应定义、安全认证定义等
   securitySchemes:
     AccessTokenAuth:
       type: apiKey
@@ -746,6 +797,15 @@ components:
       required:
         - code
         - message
+    Player:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        accountname:
+          type: string
+          example: HumorYi
     Article:
       type: object
       properties:
@@ -812,12 +872,12 @@ components:
         pageviews:
           $ref: '#/components/schemas/Pageviews/properties/pageviews'
       required:
-       - id
-       - status
-       - title
-       - timestamp
-       - importance
-       - author
+        - id
+        - status
+        - title
+        - timestamp
+        - importance
+        - author
     Pageviews:
       type: object
       properties:
