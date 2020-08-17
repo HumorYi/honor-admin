@@ -21,7 +21,7 @@ for (let i = 0; i < playerCount; i++) {
     rank: faker.random.number(200), // 排位赛段位
     bravepoints: faker.random.number(1000), // 勇者积分
     winningstreak: faker.random.number(10), // 连胜场次
-    wanttoplay: genWanttoplay(), // 想玩英雄
+    wanttoplay: genWanttoplay() // 想玩英雄
   });
 }
 
@@ -43,35 +43,115 @@ function filterPaginate(list: any[], page: number, limit: number): any[] {
   return list.filter((item: any, i: number) => i >= start && i < end);
 }
 
-function filterKeyword(list: any[], key: string, keyword: string): any[] {
-  return list.filter(
-    (item: { [key: string]: any }) =>
-      keyword && item[key] && item[key].includes(keyword)
-  );
+function filterOption(list: any[], filter: { [key: string]: any }): any[] {
+  // 所有筛选项都没有值，代表获取全部
+  if (Object.keys(filter).every((key: string) => !filter[key])) {
+    return list;
+  }
+
+  return list.filter((item: { [key: string]: any }) => {
+    for (const key in filter) {
+      const filterValue = filter[key];
+      if (filterValue && item[key].includes(filterValue)) {
+        return true;
+      }
+    }
+
+    return false;
+  });
 }
 
 function genResContentOfList(
   total: number,
   list: any[],
-  code = 0
+  code = 20000
 ): { code: number; data: { total: number; list: any[] } } {
   return {
     code,
     data: {
       total,
-      list,
-    },
+      list
+    }
   };
 }
 
+function findPlayerById(id: number) {
+  return players.find((item: Player) => item.id === id);
+}
+
 export const getPlayers = (req: Request, res: Response) => {
-  const { accountname, page = 1, limit = 10 } = req.query;
+  const { accountname, nickname, page = 1, limit = 10 } = req.query;
 
   // 筛选
-  let filterList = filterKeyword(players, "accountname", accountname);
+  let filterList = filterOption(players, { accountname, nickname });
 
   // 分页
-  const pageList = filterPaginate(filterList, page, limit);
+  const pageList = filterPaginate(filterList, page as number, limit as number);
 
   res.json(genResContentOfList(filterList.length, pageList));
+};
+
+export const createPlayer = (req: Request, res: Response) => {
+  const { player } = req.body;
+
+  res.json({
+    code: 20000,
+    data: {
+      player
+    }
+  });
+};
+
+export const getPlayer = (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  const player = findPlayerById(Number(id));
+  if (player) {
+    return res.json({
+      code: 20000,
+      data: {
+        player
+      }
+    });
+  }
+
+  res.json({
+    code: 70001,
+    message: "player not found"
+  });
+};
+
+export const updatePlayer = (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { player } = req.body;
+
+  const findPlayer = findPlayerById(Number(id));
+
+  if (findPlayer) {
+    for (const key in player) {
+      if (Object.prototype.hasOwnProperty.call(findPlayer, key)) {
+        findPlayer[key] = player[key];
+      }
+    }
+
+    res.json({
+      code: 20000,
+      data: {
+        player
+      }
+    });
+  }
+
+  res.json({
+    code: 70001,
+    message: "player not found"
+  });
+};
+
+export const deletePlayer = (req: Request, res: Response) => {
+  // const { id } = req.params;
+
+  res.json({
+    code: 20000
+  });
 };

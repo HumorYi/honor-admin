@@ -71,6 +71,147 @@ paths: # 接口路径和定义
                         type: array
                         items:
                           $ref: "#/components/schemas/Player"
+    post:
+      tags:
+        - players
+      summary: Create New Player
+      description: Create a new player.
+      operationId: createPlayer
+      security:
+        - AccessTokenAuth: []
+      parameters:
+        - name: player
+          in: query
+          required: true
+          description: The data for new player.
+          schema:
+            $ref: '#/components/schemas/Player'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                  data:
+                    type: object
+                    properties:
+                      player:
+                        $ref: "#/components/schemas/Player"
+  /players/{id}:
+    get:
+      tags:
+        - players
+      summary: Get Player Detail
+      description: Get Player detail by ID.
+      operationId: getPlayer
+      security:
+        - AccessTokenAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Player id.
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                  data:
+                    type: object
+                    properties:
+                      player:
+                        $ref: "#/components/schemas/Player"
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags:
+        - players
+      summary: Update Player Detail
+      description: Update Player detail by ID.
+      operationId: updatePlayer
+      security:
+        - AccessTokenAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Player id.
+          schema:
+            type: integer
+            format: int64
+        - name: players
+          in: query
+          required: true
+          description: The data for the update player.
+          schema:
+            $ref: "#/components/schemas/Player"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                  data:
+                    type: object
+                    properties:
+                      player:
+                        $ref: "#/components/schemas/Player"
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags:
+        - players
+      summary: Delete Player Detail
+      description: Delete Player detail by ID.
+      operationId: deletePlayer
+      security:
+        - AccessTokenAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Player id.
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
   /articles:
     get:
       tags: # 接口⽂档中的标签名称，在生成 api 文档时 就会把该接口 归纳入 对应的页签中

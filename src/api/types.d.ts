@@ -1,4 +1,8 @@
-export interface Player {
+export interface dynamicObject {
+  [key: string]: any;
+}
+
+export interface Player extends dynamicObject {
   id: number;
   accountname: string;
   nickname: string;
