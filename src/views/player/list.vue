@@ -16,6 +16,14 @@
       >
         {{ $t("player.search") }}
       </el-button>
+      <router-link :to="{name: 'CreatePlayer'}">
+        <el-button
+          type="primary"
+          icon="el-icon-edit"
+        >
+          {{ $t("player.create") }}
+        </el-button>
+      </router-link>
     </div>
 
     <el-table

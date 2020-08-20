@@ -1,9 +1,11 @@
 export default {
   player: {
     accountname: "请输入用户账户",
-    search: "查询"
+    search: "查询",
+    create: "创建玩家"
   },
   route: {
+    createPlayer: "创建玩家",
     playerMgt: "玩家管理",
     playerList: "玩家列表",
     dashboard: "首页",

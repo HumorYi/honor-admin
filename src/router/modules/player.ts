@@ -20,6 +20,15 @@ const playerRouter: RouteConfig = {
       },
       component: () =>
         import(/* webpackChunkName: "player-list" */ "@/views/player/list.vue")
+    },
+    {
+      path: "create",
+      component: () => import("@/views/player/create.vue"),
+      name: "CreatePlayer",
+      meta: {
+        title: "createPlayer",
+        icon: "edit"
+      }
     }
   ]
 };
