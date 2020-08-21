@@ -16,11 +16,8 @@
       >
         {{ $t("player.search") }}
       </el-button>
-      <router-link :to="{name: 'CreatePlayer'}">
-        <el-button
-          type="primary"
-          icon="el-icon-edit"
-        >
+      <router-link :to="{ name: 'CreatePlayer' }">
+        <el-button type="primary" icon="el-icon-edit">
           {{ $t("player.create") }}
         </el-button>
       </router-link>
@@ -34,20 +31,26 @@
       highlight-current-row
       style="width: 100%"
     >
-      <el-table-column
-        align="center"
-        label="ID"
-      >
-        <template v-slot="{row}">
+      <el-table-column align="center" label="ID">
+        <template v-slot="{ row }">
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        align="center"
-        label="登录账户"
-      >
-        <template v-slot="{row}">
+      <el-table-column align="center" label="登录账户">
+        <template v-slot="{ row }">
           <span>{{ row.accountname }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="操作">
+        <template v-slot="scope">
+          <router-link :to="'/players/update/' + scope.row.id">
+            <el-button type="primary" icon="el-icon-edit">
+              {{ $t("player.update") }}
+            </el-button>
+          </router-link>
+          <el-button type="danger" @click="handleDelete(scope)">
+            删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -62,12 +65,12 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue } from "vue-property-decorator";
 
-import Pagination from '@/components/Pagination/index.vue'
+import Pagination from "@/components/Pagination/index.vue";
 
-import { getPlayers } from '@/api/players'
-import { Player } from '@/api/types'
+import { getPlayers, deletePlayer } from "@/api/players";
+import { Player } from "@/api/types";
 
 @Component({
   components: {
@@ -82,31 +85,52 @@ export default class PlayerList extends Vue {
   private listQuery = {
     page: 1,
     limit: 10,
-    accountname: undefined
+    accountname: ""
   };
 
   created() {
-    this.getList()
+    this.getList();
   }
 
   // 获取列表
   private async getList() {
-    this.listLoading = true
+    this.listLoading = true;
 
     const {
       data: { list, total }
-    } = await getPlayers(this.listQuery)
+    } = await getPlayers(this.listQuery);
 
-    this.list = list
-    this.total = total
-    this.listLoading = false
+    this.list = list;
+    this.total = total;
+    this.listLoading = false;
   }
 
   private handleFilter() {
-    this.listQuery.page = 1
-    this.total = 0
-    this.list = []
-    this.getList()
+    this.listQuery.page = 1;
+    this.total = 0;
+    this.list = [];
+    this.getList();
+  }
+
+  private handleDelete(scope: any) {
+    const { $index, row } = scope;
+    this.$confirm("确定删除玩家信息?", "提示", {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      type: "warning"
+    })
+      .then(async () => {
+        await deletePlayer(row.id, {});
+        this.list.splice($index, 1);
+
+        this.$message({
+          type: "success",
+          message: "删除成功!"
+        });
+      })
+      .catch(err => {
+        console.error(err);
+      });
   }
 }
 </script>

@@ -10,7 +10,7 @@ faker.locale = "zh_CN";
 const playerCount = 100;
 const players: Player[] = [];
 
-for (let i = 0; i < playerCount; i++) {
+for (let i = 1; i <= playerCount; i++) {
   players.push({
     id: i,
     accountname: faker.name.findName(),

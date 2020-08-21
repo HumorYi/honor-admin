@@ -10,9 +10,9 @@ export const getPlayers = (params: any) => {
 
 export const getPlayer = (id: number, params: any) => {
   return request({
-    url: "/players",
+    url: `/players/${id}`,
     method: "get",
-    params: { id, ...params }
+    params
   });
 };
 
@@ -26,8 +26,16 @@ export const createPlayer = (params: any) => {
 
 export const updatePlayer = (id: number, params: any) => {
   return request({
-    url: "/players",
-    method: "post",
-    params: { id, ...params }
+    url: `/players/${id}`,
+    method: "put",
+    params
+  });
+};
+
+export const deletePlayer = (id: number, params: any) => {
+  return request({
+    url: `/players/${id}`,
+    method: "delete",
+    params
   });
 };
